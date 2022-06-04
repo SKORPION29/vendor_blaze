@@ -71,10 +71,30 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     vendor/blaze/config/permissions/com.google.android.apps.dialer.call_recording_audio.features.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/com.google.android.apps.dialer.call_recording_audio.features.xml
 
+# Fling Sysprops
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.min.fling_velocity=160 \
+    ro.max.fling_velocity=20000
+
+# Disable Deep Press touch video heatmaps 
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.input.video_enabled=false
+
+# Don't preopt prebuilts
+DONT_DEXPREOPT_PREBUILTS := true
+
+# Disable remote keyguard animation
+PRODUCT_SYSTEM_PROPERTIES += \
+    persist.wm.enable_remote_keyguard_animation=0
+
 # Blurs
+TARGET_SUPPORTS_BLUR ?= false
+ifeq ($(TARGET_SUPPORTS_BLUR),true)
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
     ro.sf.blurs_are_expensive=1 \
-    ro.surface_flinger.supports_background_blur=1
+    ro.surface_flinger.supports_background_blur=1 \
+    persist.sysui.disableBlur=false
+endif
 
 # Disable blur on app-launch
 PRODUCT_SYSTEM_EXT_PROPERTIES += \
@@ -172,7 +192,8 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 # Dex preopt
 PRODUCT_DEXPREOPT_SPEED_APPS += \
-    SystemUI
+    SystemUI \
+    Settings
 
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
 -include vendor/blaze/config/partner_gms.mk
